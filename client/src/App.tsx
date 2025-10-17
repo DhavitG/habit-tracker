@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import SignUp from "./pages/SignUp";
-import { LogIn } from "lucide-react";
 import Login from "./pages/Login";
 
 const queryClient = new QueryClient();
