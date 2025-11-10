@@ -11,7 +11,7 @@ import {
   Target,
 } from "lucide-react";
 
-const Login = () => {
+const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -261,4 +261,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignIn;
