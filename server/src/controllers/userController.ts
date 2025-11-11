@@ -1,9 +1,10 @@
 import bcrypt from "bcryptjs";
 import type { Request, Response } from "express";
-import { z } from "zod";
+import { email, z } from "zod";
+import jwt from "jsonwebtoken";
 import UserModel from "../models/User.js";
 
-const requiredBody = z.object({
+const signupBody = z.object({
   fullName: z.string().min(5).max(40),
   email: z.email("Invalid email address"),
   password: z
@@ -15,9 +16,14 @@ const requiredBody = z.object({
     .regex(/[@$!%*?&#]/, "Must contain special character"),
 });
 
+const signinBody = z.object({
+  email: z.email("Invalid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
 export const userSignUp = async (req: Request, res: Response) => {
   try {
-    const parsedDataWithSuccess = requiredBody.safeParse(req.body);
+    const parsedDataWithSuccess = signupBody.safeParse(req.body);
 
     if (!parsedDataWithSuccess.success) {
       return res.status(400).json({
@@ -76,6 +82,81 @@ export const userSignUp = async (req: Request, res: Response) => {
     }
 
     // password error
+    if (e.message && e.message.includes("bcrypt")) {
+      return res.status(500).json({
+        message: "Error processing password. Please try again.",
+      });
+    }
+
+    return res.status(500).json({
+      message: "An unexpected error occurred. Please try again later.",
+    });
+  }
+};
+
+export const userSignIn = async (req: Request, res: Response) => {
+  try {
+    const parsedDataWithSuccess = signinBody.safeParse(req.body);
+    if (!parsedDataWithSuccess.success) {
+      return res.status(400).json({
+        message: "Incorrect Format",
+        error: parsedDataWithSuccess.error,
+      });
+    }
+
+    const { email, password } = req.body;
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(401).json({
+        message: "Inavlid credentials",
+      });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user?.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({
+        message: "Invalid Credentials",
+      });
+    }
+
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    return res.status(200).json({
+      message: "User signed in",
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        fullName: user.fullName,
+      },
+    });
+  } catch (e: any) {
+    console.error("Signin error:", e);
+
+    if (e.name === "MongoNetworkError" || e.name === "MongoServerError") {
+      return res.status(503).json({
+        message:
+          "Database service temporarily unavailable. Please try again later.",
+      });
+    }
+
+    if (
+      e.message &&
+      (e.message.includes("jwt") || e.message.includes("secret"))
+    ) {
+      return res.status(500).json({
+        message: "Authentication service error. Please try again.",
+      });
+    }
+
     if (e.message && e.message.includes("bcrypt")) {
       return res.status(500).json({
         message: "Error processing password. Please try again.",
