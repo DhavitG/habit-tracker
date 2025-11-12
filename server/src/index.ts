@@ -1,21 +1,27 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+
+import express from "express";
 import cors from "cors";
+import passport from "./config/passport.js";
 
 import userRouter from "./routes/userRoutes.js";
-
-dotenv.config();
+import authRouter from "./routes/authRouter.js";
+import mongoose from "mongoose";
 
 const app = express();
 
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
+app.use(passport.initialize());
 
 const PORT = process.env.PORT;
 
 app.use("/api/v1/users", userRouter);
+app.use("/auth", authRouter);
 
 async function main() {
+  await mongoose.connect(process.env.MONGO_URI as string);
   app.listen(PORT);
 }
 

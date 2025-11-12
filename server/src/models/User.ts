@@ -3,7 +3,8 @@ import mongoose, { Document } from "mongoose";
 interface IUser extends Document {
   fullName: string;
   email: string;
-  password: string;
+  password?: string;
+  googleId?: string;
   settings: {
     timezone?: string;
     weekStartsOn?: string;
@@ -21,7 +22,8 @@ const userSchema = new mongoose.Schema<IUser>(
       lowercase: true,
       trim: true,
     },
-    password: { type: String, required: true },
+    password: { type: String },
+    googleId: { type: String },
     settings: {
       timezone: { type: String, default: "Asia/Kolkata" },
       weekStartsOn: { type: String, default: "monday" },
