@@ -9,6 +9,7 @@ import {
   ArrowRight,
   CheckCircle2,
 } from "lucide-react";
+import axios from "axios";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,9 +20,28 @@ const SignUp = () => {
     agreeToTerms: false,
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Signup data:", formData);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/users/signup`,
+        {
+          fullName: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }
+      );
+
+      // token
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      window.location.href = "/habits-dashboard";
+    } catch (e) {
+      console.error("Signup failed:", e);
+      alert(e.response?.data?.message || "Signup failed");
+    }
   };
 
   const benefits = [
@@ -227,7 +247,7 @@ const SignUp = () => {
           <p className="text-center mt-6 text-sm text-gray-600">
             Already have an account?{" "}
             <a
-              href="/login"
+              href="/signin"
               className="text-green-500 hover:underline font-medium"
             >
               Sign in

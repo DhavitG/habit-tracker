@@ -72,8 +72,8 @@ const Index = () => {
             </h1>
 
             <p className="text-xl sm:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
-              A beautiful, simple habit tracker inspired by Notion. Track your
-              daily habits, visualize your progress, and build lasting change.
+              A beautiful, simple habit tracker. Track your daily habits,
+              visualize your progress, and build lasting change.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -275,7 +275,7 @@ const Index = () => {
             <Button
               size="lg"
               className="text-lg px-10 py-6 bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/signup")}
             >
               Start Your Journey
             </Button>

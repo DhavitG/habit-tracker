@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Target,
 } from "lucide-react";
+import axios from "axios";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,9 +20,11 @@ const SignIn = () => {
     rememberMe: false,
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Login data:", formData);
+
+    const response = axios.post(`${import.meta.env.VITE_BACKEND_URL}`);
   };
 
   const stats = [

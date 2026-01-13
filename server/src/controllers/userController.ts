@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import type { Request, Response } from "express";
-import { email, z } from "zod";
+import { z } from "zod";
 import jwt from "jsonwebtoken";
 import UserModel from "../models/User.js";
 

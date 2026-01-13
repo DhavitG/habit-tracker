@@ -22,7 +22,9 @@ app.use("/auth", authRouter);
 
 async function main() {
   await mongoose.connect(process.env.MONGO_URI as string);
-  app.listen(PORT);
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`); // Add this!
+  });
 }
 
 main();
