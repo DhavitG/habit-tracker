@@ -13,7 +13,7 @@ const userMiddleware = (req: Request, res: Response, next: NextFunction) => {
     ) as JwtPayload;
 
     if (decoded) {
-      req.userId = decoded.id;
+      req.userId = decoded.userId;
       next();
     }
   } catch (e) {

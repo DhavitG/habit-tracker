@@ -4,9 +4,9 @@ import type { Document } from "mongoose";
 interface ICompletion extends Document {
   userId: mongoose.Schema.Types.ObjectId;
   habitId: mongoose.Schema.Types.ObjectId;
-  completed: Boolean;
+  completed: boolean;
   date: Date;
-  notes?: String;
+  notes?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -24,7 +24,15 @@ const completionSchema = new mongoose.Schema<ICompletion>(
       required: true,
     },
     completed: { type: Boolean, default: false, required: true },
-    date: { type: Date, required: true },
+    date: {
+      type: Date,
+      required: true,
+      default: () => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return today;
+      },
+    },
     notes: { type: String },
   },
   { timestamps: true }
