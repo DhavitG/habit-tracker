@@ -1,1 +1,0 @@
-{"root":["./src/express.d.ts","./src/index.ts","./src/config/passport.ts","./src/controllers/habitcontroller.ts","./src/controllers/usercontroller.ts","./src/middleware/usermiddleware.ts","./src/models/completion.ts","./src/models/habit.ts","./src/models/user.ts","./src/routes/authrouter.ts","./src/routes/habitroutes.ts","./src/routes/userroutes.ts"],"version":"5.9.3"}

@@ -61,6 +61,7 @@ public/uploads/
 .cache/
 .eslintcache
 .node_repl_history
+tsconfig.tsbuildinfo
 
 # OS files
 Thumbs.db

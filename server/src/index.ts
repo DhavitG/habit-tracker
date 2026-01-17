@@ -9,6 +9,7 @@ import passport from "./config/passport.js";
 import userRouter from "./routes/userRoutes.js";
 import authRouter from "./routes/authRouter.js";
 import habitRouter from "./routes/habitRoutes.js";
+import completionRouter from "./routes/completionRoutes.js";
 
 const app = express();
 
@@ -21,6 +22,7 @@ const PORT = process.env.PORT;
 app.use("/api/v1/users", userRouter);
 app.use("/auth", authRouter);
 app.use("/api/v1/habits", habitRouter);
+app.use("/api/completions", completionRouter);
 
 async function main() {
   await mongoose.connect(process.env.MONGO_URI as string);
