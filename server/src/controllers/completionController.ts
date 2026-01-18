@@ -1,11 +1,7 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response } from "express";
 import CompletionModel from "../models/Completion.js";
 
-const updateCompletion = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const updateCompletion = async (req: Request, res: Response) => {
   try {
     const userId = req.userId;
     const { habitId, completed, date, notes } = req.body;
@@ -37,7 +33,7 @@ const updateCompletion = async (
         notes,
       });
 
-      res.status(201).json({
+      return res.status(201).json({
         message: "Completion created",
         completion: newCompletion,
       });
@@ -50,11 +46,7 @@ const updateCompletion = async (
   }
 };
 
-const getTodayCompletions = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const getTodayCompletions = async (req: Request, res: Response) => {
   try {
     const userId = req.userId;
     const today = new Date();
@@ -65,15 +57,95 @@ const getTodayCompletions = async (
       date: today,
     });
 
-    return res.json(200).json({
+    return res.status(200).json({
       completions,
     });
   } catch (e) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Couldn't get today's completions",
       error: e instanceof Error ? e.message : "Unknown error",
     });
   }
 };
 
-export { updateCompletion, getTodayCompletions };
+const getCompletionHabits = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userId;
+    const { habitId } = req.params;
+
+    const completionHistory = await CompletionModel.find({
+      userId,
+      habitId,
+    });
+
+    return res.status(200).json({
+      completions: completionHistory,
+    });
+  } catch (e) {
+    return res.status(500).json({
+      message: "Failed to fetch completion history",
+      error: e instanceof Error ? e.message : "Unknown error",
+    });
+  }
+};
+
+const updateSpecificHabitCompletion = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userId;
+    const { id } = req.params;
+    const { completed, notes } = req.body;
+
+    const completion = await CompletionModel.findOneAndUpdate(
+      { _id: id, userId },
+      { completed, notes },
+      { new: true },
+    );
+
+    if (!completion) {
+      return res.status(404).json({ message: "Completion not found" });
+    }
+
+    return res.status(200).json({
+      message: "Completion updated succesfully",
+      completion,
+    });
+  } catch (e) {
+    return res.status(500).json({
+      message: "Couldn't update habit",
+      error: e instanceof Error ? e.message : "Unknown error",
+    });
+  }
+};
+
+const deleteCompletion = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userId;
+    const { id } = req.params;
+
+    const completion = await CompletionModel.findOneAndDelete({
+      _id: id,
+      userId,
+    });
+
+    if (!completion) {
+      return res.status(404).json({ message: "Completion not found" });
+    }
+
+    return res.status(200).json({
+      message: "Completion deleted successfully",
+    });
+  } catch (e) {
+    return res.status(500).json({
+      message: "Couldn't undo completion",
+      error: e instanceof Error ? e.message : "Unknown error",
+    });
+  }
+};
+
+export {
+  updateCompletion,
+  getTodayCompletions,
+  getCompletionHabits,
+  updateSpecificHabitCompletion,
+  deleteCompletion,
+};

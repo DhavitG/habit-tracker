@@ -22,7 +22,7 @@ const PORT = process.env.PORT;
 app.use("/api/v1/users", userRouter);
 app.use("/auth", authRouter);
 app.use("/api/v1/habits", habitRouter);
-app.use("/api/completions", completionRouter);
+app.use("/api/v1/completions", completionRouter);
 
 async function main() {
   await mongoose.connect(process.env.MONGO_URI as string);
