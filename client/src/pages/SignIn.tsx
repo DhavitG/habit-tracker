@@ -22,9 +22,24 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login data:", formData);
 
-    const response = axios.post(`${import.meta.env.VITE_BACKEND_URL}`);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/users/signin`,
+        {
+          email: formData.email,
+          password: formData.password,
+        },
+      );
+
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      window.location.href = "/habits-dashboard";
+    } catch (e) {
+      console.error("Signin failed:", e);
+      alert(e.response?.data?.message || "Signin failed");
+    }
   };
 
   const stats = [

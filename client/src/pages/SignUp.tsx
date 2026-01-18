@@ -30,14 +30,14 @@ const SignUp = () => {
           fullName: formData.name,
           email: formData.email,
           password: formData.password,
-        }
+        },
       );
 
       // token
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
 
-      window.location.href = "/habits-dashboard";
+      window.location.href = "/signin";
     } catch (e) {
       console.error("Signup failed:", e);
       alert(e.response?.data?.message || "Signup failed");

@@ -132,7 +132,7 @@ export const userSignIn = async (req: Request, res: Response) => {
       process.env.JWT_SECRET as string,
       {
         expiresIn: "7d",
-      }
+      },
     );
 
     return res.status(200).json({
