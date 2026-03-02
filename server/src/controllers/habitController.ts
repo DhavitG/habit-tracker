@@ -67,14 +67,14 @@ const updateHabit = async (req: Request, res: Response) => {
     const updatedHabit = await HabitModel.findOneAndUpdate(
       { _id: habitId, userId },
       { name, description, category, frequency, goal, color, icon, isArchived },
-      { new: true }
+      { new: true },
     );
 
-    if (!updateHabit) {
-      res.status(404).json({ message: "Habit Not Found" });
+    if (!updatedHabit) {
+      return res.status(404).json({ message: "Habit Not Found" });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Habit updated succesfully!",
       updateHabit,
     });

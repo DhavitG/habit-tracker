@@ -68,7 +68,7 @@ const SignIn = () => {
 
           {/* Form Card */}
           <div className="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-gray-100">
-            <div className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {/* Email Field */}
               <div className="space-y-2">
                 <label
@@ -160,13 +160,13 @@ const SignIn = () => {
 
               {/* Submit Button */}
               <button
-                onClick={handleSubmit}
+                type="submit"
                 className="w-full h-11 rounded-lg text-base font-medium text-white bg-green-500 hover:bg-green-600 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-[1.02]"
               >
                 Sign In
                 <ArrowRight className="ml-2 h-5 w-5" />
               </button>
-            </div>
+            </form>
 
             {/* Divider */}
             <div className="relative my-6">

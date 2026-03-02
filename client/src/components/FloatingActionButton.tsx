@@ -10,18 +10,17 @@ export function FloatingActionButton({ onClick }: FloatingActionButtonProps) {
     <button
       onClick={onClick}
       className={cn(
-        "fixed bottom-8 right-8 h-16 w-16 rounded-full",
-        "bg-gradient-to-br from-habit-primary to-emerald-600",
+        "fixed bottom-8 right-8 h-14 w-14 rounded-full",
+        "bg-primary text-primary-foreground",
         "flex items-center justify-center",
-        "shadow-lg shadow-habit-primary/30",
-        "transition-all duration-300 ease-out",
-        "hover:scale-110 hover:shadow-xl hover:shadow-habit-primary/40",
+        "shadow-lg transition-all duration-200",
+        "hover:scale-105 hover:shadow-xl",
         "active:scale-95",
-        "z-30",
+        "z-50",
       )}
       aria-label="Add new habit"
     >
-      <Plus className="h-8 w-8" strokeWidth={2.5} />
+      <Plus className="h-6 w-6" strokeWidth={2.5} />
     </button>
   );
 }

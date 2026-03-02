@@ -1,9 +1,13 @@
-import { Habit } from "@/types/habit";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Habit, categoryColors } from "@/types/habit";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { CalendarHeatmap } from "./CalendarHeatmap";
-import { getHabitStats, categoryColors } from "@/utils/habitHelpers";
+import { getHabitStats } from "@/utils/habitHelpers";
 import { Edit2, Trash2, Flame, CheckCircle2, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -15,10 +19,17 @@ interface HabitDetailModalProps {
   onDelete: () => void;
 }
 
-export const HabitDetailModal = ({ habit, open, onClose, onEdit, onDelete }: HabitDetailModalProps) => {
+export const HabitDetailModal = ({
+  habit,
+  open,
+  onClose,
+  onEdit,
+  onDelete,
+}: HabitDetailModalProps) => {
   if (!habit) return null;
 
   const stats = getHabitStats(habit);
+  const style = categoryColors[habit.category];
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -26,71 +37,77 @@ export const HabitDetailModal = ({ habit, open, onClose, onEdit, onDelete }: Hab
         <DialogHeader>
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="text-5xl">{habit.emoji}</span>
+              <span className="text-4xl">{habit.emoji}</span>
               <div>
-                <DialogTitle className="text-2xl mb-2">{habit.name}</DialogTitle>
-                <Badge 
-                  variant="secondary"
+                <DialogTitle className="text-xl mb-1.5">
+                  {habit.name}
+                </DialogTitle>
+                <span
                   className={cn(
-                    "text-sm",
-                    `bg-${categoryColors[habit.category]}/10 text-${categoryColors[habit.category]}`
+                    "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium capitalize",
+                    style.light,
+                    style.dark,
                   )}
                 >
                   {habit.category}
-                </Badge>
+                </span>
               </div>
             </div>
-            
-            <div className="flex gap-2">
+
+            <div className="flex gap-1.5">
               <Button
                 variant="outline"
                 size="icon"
                 onClick={onEdit}
-                className="hover:bg-primary/10 hover:text-primary hover:border-primary"
+                className="h-8 w-8"
               >
-                <Edit2 className="h-4 w-4" />
+                <Edit2 className="h-3.5 w-3.5" />
               </Button>
               <Button
                 variant="outline"
                 size="icon"
                 onClick={onDelete}
-                className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
+                className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </div>
           </div>
         </DialogHeader>
 
-        <div className="space-y-6 mt-6">
+        <div className="space-y-6 mt-4">
           {habit.description && (
-            <div>
-              <p className="text-muted-foreground">{habit.description}</p>
-            </div>
+            <p className="text-sm text-muted-foreground">{habit.description}</p>
           )}
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             <div className="bg-muted rounded-lg p-4 text-center">
-              <Flame className="h-6 w-6 mx-auto mb-2 text-accent" />
-              <div className="text-2xl font-bold text-foreground">{stats.currentStreak}</div>
-              <div className="text-sm text-muted-foreground">Day Streak</div>
+              <Flame className="h-5 w-5 mx-auto mb-1.5 text-orange-500" />
+              <div className="text-2xl font-bold text-foreground">
+                {stats.currentStreak}
+              </div>
+              <div className="text-xs text-muted-foreground">Day Streak</div>
             </div>
-            
             <div className="bg-muted rounded-lg p-4 text-center">
-              <CheckCircle2 className="h-6 w-6 mx-auto mb-2 text-success" />
-              <div className="text-2xl font-bold text-foreground">{stats.totalCompletions}</div>
-              <div className="text-sm text-muted-foreground">Total Completions</div>
+              <CheckCircle2 className="h-5 w-5 mx-auto mb-1.5 text-primary" />
+              <div className="text-2xl font-bold text-foreground">
+                {stats.totalCompletions}
+              </div>
+              <div className="text-xs text-muted-foreground">Completions</div>
             </div>
-            
             <div className="bg-muted rounded-lg p-4 text-center">
-              <TrendingUp className="h-6 w-6 mx-auto mb-2 text-primary" />
-              <div className="text-2xl font-bold text-foreground">{stats.completionRate}%</div>
-              <div className="text-sm text-muted-foreground">Success Rate</div>
+              <TrendingUp className="h-5 w-5 mx-auto mb-1.5 text-secondary" />
+              <div className="text-2xl font-bold text-foreground">
+                {stats.completionRate}%
+              </div>
+              <div className="text-xs text-muted-foreground">Success Rate</div>
             </div>
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg mb-4 text-foreground">Last 90 Days</h3>
+            <h3 className="font-medium text-sm mb-3 text-foreground">
+              Last 90 Days
+            </h3>
             <CalendarHeatmap habit={habit} />
           </div>
         </div>

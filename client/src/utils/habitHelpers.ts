@@ -1,5 +1,11 @@
 import { Habit, HabitStats } from "@/types/habit";
-import { format, subDays, parseISO, startOfDay, differenceInDays } from "date-fns";
+import {
+  format,
+  subDays,
+  parseISO,
+  startOfDay,
+  differenceInDays,
+} from "date-fns";
 
 export const getTodayKey = () => format(new Date(), "yyyy-MM-dd");
 
@@ -18,7 +24,7 @@ export const getLast90Days = (): string[] => {
 export const calculateStreak = (habit: Habit): number => {
   let streak = 0;
   let currentDate = new Date();
-  
+
   while (true) {
     const dateKey = format(currentDate, "yyyy-MM-dd");
     if (habit.completions[dateKey]) {
@@ -28,34 +34,30 @@ export const calculateStreak = (habit: Habit): number => {
       break;
     }
   }
-  
+
   return streak;
 };
 
 export const getHabitStats = (habit: Habit): HabitStats => {
-  const totalCompletions = Object.values(habit.completions).filter(Boolean).length;
+  const totalCompletions = Object.values(habit.completions).filter(
+    Boolean,
+  ).length;
   const currentStreak = calculateStreak(habit);
-  
-  const daysSinceCreation = differenceInDays(
-    startOfDay(new Date()),
-    startOfDay(parseISO(habit.createdAt))
-  ) + 1;
-  
-  const completionRate = daysSinceCreation > 0 
-    ? Math.round((totalCompletions / daysSinceCreation) * 100) 
-    : 0;
-  
+
+  const daysSinceCreation =
+    differenceInDays(
+      startOfDay(new Date()),
+      startOfDay(parseISO(habit.createdAt)),
+    ) + 1;
+
+  const completionRate =
+    daysSinceCreation > 0
+      ? Math.round((totalCompletions / daysSinceCreation) * 100)
+      : 0;
+
   return {
     currentStreak,
     totalCompletions,
     completionRate,
   };
-};
-
-export const categoryColors: Record<string, string> = {
-  Health: "habit-health",
-  Productivity: "habit-productivity",
-  Social: "habit-social",
-  Mindfulness: "habit-mindfulness",
-  Other: "habit-other",
 };

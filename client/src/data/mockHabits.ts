@@ -1,7 +1,10 @@
 import { Habit } from "@/types/habit";
 import { format, subDays } from "date-fns";
 
-const generateCompletions = (daysBack: number, successRate: number = 0.7): Record<string, boolean> => {
+const generateCompletions = (
+  daysBack: number,
+  successRate: number = 0.7,
+): Record<string, boolean> => {
   const completions: Record<string, boolean> = {};
   for (let i = 0; i < daysBack; i++) {
     const date = format(subDays(new Date(), i), "yyyy-MM-dd");
@@ -15,9 +18,8 @@ export const mockHabits: Habit[] = [
     id: "1",
     name: "Morning Workout",
     description: "30 minutes of exercise to start the day",
-    category: "Health",
+    category: "health",
     emoji: "💪",
-    color: "habit-health",
     frequency: "daily",
     createdAt: format(subDays(new Date(), 60), "yyyy-MM-dd"),
     completions: generateCompletions(60, 0.75),
@@ -26,9 +28,8 @@ export const mockHabits: Habit[] = [
     id: "2",
     name: "Read 30 min",
     description: "Read for at least 30 minutes",
-    category: "Productivity",
+    category: "productivity",
     emoji: "📚",
-    color: "habit-productivity",
     frequency: "daily",
     createdAt: format(subDays(new Date(), 45), "yyyy-MM-dd"),
     completions: generateCompletions(45, 0.65),
@@ -37,9 +38,8 @@ export const mockHabits: Habit[] = [
     id: "3",
     name: "Drink 8 glasses of water",
     description: "Stay hydrated throughout the day",
-    category: "Health",
+    category: "health",
     emoji: "💧",
-    color: "habit-health",
     frequency: "daily",
     createdAt: format(subDays(new Date(), 30), "yyyy-MM-dd"),
     completions: generateCompletions(30, 0.8),
@@ -48,9 +48,8 @@ export const mockHabits: Habit[] = [
     id: "4",
     name: "Meditation",
     description: "10 minutes of mindful meditation",
-    category: "Mindfulness",
+    category: "mindfulness",
     emoji: "🧘",
-    color: "habit-mindfulness",
     frequency: "daily",
     createdAt: format(subDays(new Date(), 20), "yyyy-MM-dd"),
     completions: generateCompletions(20, 0.6),

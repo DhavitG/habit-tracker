@@ -1,12 +1,15 @@
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import { Habit, defaultHabits } from "@/components/types";
+import { Habit } from "@/types/habit";
 import { HabitCard } from "@/components/HabitCard";
 import { HabitSlidePanel } from "@/components/HabitSlidePanel";
+import { HabitDetailModal } from "@/components/HabitDetailModal";
 import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog";
 import { FloatingActionButton } from "@/components/FloatingActionButton";
 import { EmptyState } from "@/components/EmptyState";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
+import { mockHabits } from "@/data/mockHabits";
+import { isHabitCompletedToday, getTodayKey } from "@/utils/habitHelpers";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -18,17 +21,20 @@ function getGreeting(): string {
 function formatDate(): string {
   return new Date().toLocaleDateString("en-US", {
     weekday: "long",
-    year: "numeric",
     month: "long",
     day: "numeric",
   });
 }
 
 export default function HabitsDashboard() {
-  const [habits, setHabits] = useState<Habit[]>(defaultHabits);
+  const [habits, setHabits] = useState<Habit[]>(mockHabits);
+  const [activeTab, setActiveTab] = useState("today");
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [deletingHabit, setDeletingHabit] = useState<Habit | null>(null);
+  const [viewingHabit, setViewingHabit] = useState<Habit | null>(null);
+
+  const todayKey = getTodayKey();
 
   const handleToggle = (id: string) => {
     setHabits((prev) =>
@@ -36,10 +42,10 @@ export default function HabitsDashboard() {
         habit.id === id
           ? {
               ...habit,
-              completed: !habit.completed,
-              streak: !habit.completed
-                ? habit.streak + 1
-                : Math.max(0, habit.streak - 1),
+              completions: {
+                ...habit.completions,
+                [todayKey]: !habit.completions[todayKey],
+              },
             }
           : habit,
       ),
@@ -59,39 +65,18 @@ export default function HabitsDashboard() {
     if (deletingHabit) {
       setHabits((prev) => prev.filter((h) => h.id !== deletingHabit.id));
       setDeletingHabit(null);
+      setViewingHabit(null);
     }
   };
 
-  const handleSave = (habitData: {
-    id?: string;
-    name: string;
-    emoji: string;
-    category: Habit["category"];
-  }) => {
-    if (habitData.id) {
-      setHabits((prev) =>
-        prev.map((h) =>
-          h.id === habitData.id
-            ? {
-                ...h,
-                name: habitData.name,
-                emoji: habitData.emoji,
-                category: habitData.category,
-              }
-            : h,
-        ),
-      );
-    } else {
-      const newHabit: Habit = {
-        id: Date.now().toString(),
-        name: habitData.name,
-        emoji: habitData.emoji,
-        category: habitData.category,
-        completed: false,
-        streak: 0,
-      };
-      setHabits((prev) => [...prev, newHabit]);
-    }
+  const handleSave = (habit: Habit) => {
+    setHabits((prev) => {
+      const exists = prev.find((h) => h.id === habit.id);
+      if (exists) {
+        return prev.map((h) => (h.id === habit.id ? habit : h));
+      }
+      return [...prev, habit];
+    });
     setEditingHabit(null);
   };
 
@@ -100,42 +85,49 @@ export default function HabitsDashboard() {
     setIsPanelOpen(true);
   };
 
-  const completedCount = habits.filter((h) => h.completed).length;
+  const completedCount = habits.filter((h) => isHabitCompletedToday(h)).length;
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <Sidebar />
+    <div className="flex min-h-screen bg-background">
+      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {/* Main Content */}
-      <div className="flex-1 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="flex-1">
+        <div className="max-w-3xl mx-auto px-6 py-8">
           {/* Header */}
-          <header className="flex items-start justify-between mb-10">
+          <header className="flex items-start justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-1">
-                {getGreeting()}, Sarah
+              <h1 className="text-2xl font-bold text-foreground mb-0.5">
+                {getGreeting()}
               </h1>
-              <p className="text-gray-600">{formatDate()}</p>
+              <p className="text-sm text-muted-foreground">{formatDate()}</p>
             </div>
+            <DarkModeToggle />
           </header>
 
-          {/* Progress summary */}
+          {/* Progress */}
           {habits.length > 0 && (
             <div className="mb-8">
-              <p className="text-sm text-gray-600">
-                <span className="text-gray-900 font-semibold">
-                  {completedCount}
-                </span>{" "}
-                of{" "}
-                <span className="text-gray-900 font-semibold">
-                  {habits.length}
-                </span>{" "}
-                habits completed today
-              </p>
-              <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="flex items-baseline justify-between mb-2">
+                <p className="text-sm text-muted-foreground">
+                  <span className="text-foreground font-semibold">
+                    {completedCount}
+                  </span>
+                  {" / "}
+                  <span className="text-foreground font-semibold">
+                    {habits.length}
+                  </span>
+                  {" completed"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {habits.length > 0
+                    ? Math.round((completedCount / habits.length) * 100)
+                    : 0}
+                  %
+                </p>
+              </div>
+              <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-green-500 rounded-full transition-all duration-500"
+                  className="h-full bg-primary rounded-full transition-all duration-500"
                   style={{
                     width: `${(completedCount / habits.length) * 100}%`,
                   }}
@@ -144,11 +136,11 @@ export default function HabitsDashboard() {
             </div>
           )}
 
-          {/* Habits list */}
+          {/* Habits List */}
           {habits.length === 0 ? (
             <EmptyState onCreateClick={openNewHabitPanel} />
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {habits.map((habit) => (
                 <HabitCard
                   key={habit.id}
@@ -156,16 +148,16 @@ export default function HabitsDashboard() {
                   onToggle={handleToggle}
                   onEdit={handleEdit}
                   onDelete={handleDelete}
+                  onClick={setViewingHabit}
                 />
               ))}
             </div>
           )}
         </div>
 
-        {/* Floating Button */}
         <FloatingActionButton onClick={openNewHabitPanel} />
 
-        {/* Slide Panel */}
+        {/* Slide Panel for Create/Edit */}
         <HabitSlidePanel
           isOpen={isPanelOpen}
           onClose={() => {
@@ -176,7 +168,26 @@ export default function HabitsDashboard() {
           editingHabit={editingHabit}
         />
 
-        {/* Delete Dialog */}
+        {/* Detail Modal */}
+        <HabitDetailModal
+          habit={viewingHabit}
+          open={!!viewingHabit}
+          onClose={() => setViewingHabit(null)}
+          onEdit={() => {
+            if (viewingHabit) {
+              setViewingHabit(null);
+              handleEdit(viewingHabit);
+            }
+          }}
+          onDelete={() => {
+            if (viewingHabit) {
+              setViewingHabit(null);
+              handleDelete(viewingHabit);
+            }
+          }}
+        />
+
+        {/* Delete Confirmation */}
         <DeleteConfirmDialog
           habit={deletingHabit}
           onConfirm={confirmDelete}
