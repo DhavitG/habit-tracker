@@ -21,7 +21,7 @@ const updateCompletion = async (req: Request, res: Response) => {
 
       await existingCompletion.save();
       return res.status(200).json({
-        message: "Completion Updated",
+        message: "Completion updated",
         completion: existingCompletion,
       });
     } else {
@@ -38,10 +38,29 @@ const updateCompletion = async (req: Request, res: Response) => {
         completion: newCompletion,
       });
     }
-  } catch (e) {
+  } catch (e: any) {
+    console.error("Update completion error:", e);
+
+    if (e.name === "CastError") {
+      return res.status(400).json({
+        message: "Invalid habit or completion ID",
+      });
+    }
+
+    if (e.name === "ValidationError") {
+      return res.status(422).json({
+        message: "Invalid data provided",
+      });
+    }
+
+    if (e.name === "MongoNetworkError" || e.name === "MongoServerError") {
+      return res.status(503).json({
+        message: "Database service temporarily unavailable. Please try again later.",
+      });
+    }
+
     return res.status(500).json({
-      message: "Failed to update completion",
-      error: e instanceof Error ? e.message : "Unknown error",
+      message: "An unexpected error occurred. Please try again later.",
     });
   }
 };
@@ -60,10 +79,17 @@ const getTodayCompletions = async (req: Request, res: Response) => {
     return res.status(200).json({
       completions,
     });
-  } catch (e) {
+  } catch (e: any) {
+    console.error("Get today completions error:", e);
+
+    if (e.name === "MongoNetworkError" || e.name === "MongoServerError") {
+      return res.status(503).json({
+        message: "Database service temporarily unavailable. Please try again later.",
+      });
+    }
+
     return res.status(500).json({
-      message: "Couldn't get today's completions",
-      error: e instanceof Error ? e.message : "Unknown error",
+      message: "An unexpected error occurred. Please try again later.",
     });
   }
 };
@@ -81,10 +107,23 @@ const getCompletionHabits = async (req: Request, res: Response) => {
     return res.status(200).json({
       completions: completionHistory,
     });
-  } catch (e) {
+  } catch (e: any) {
+    console.error("Get completion history error:", e);
+
+    if (e.name === "CastError") {
+      return res.status(400).json({
+        message: "Invalid habit ID",
+      });
+    }
+
+    if (e.name === "MongoNetworkError" || e.name === "MongoServerError") {
+      return res.status(503).json({
+        message: "Database service temporarily unavailable. Please try again later.",
+      });
+    }
+
     return res.status(500).json({
-      message: "Failed to fetch completion history",
-      error: e instanceof Error ? e.message : "Unknown error",
+      message: "An unexpected error occurred. Please try again later.",
     });
   }
 };
@@ -106,13 +145,26 @@ const updateSpecificHabitCompletion = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json({
-      message: "Completion updated succesfully",
+      message: "Completion updated successfully",
       completion,
     });
-  } catch (e) {
+  } catch (e: any) {
+    console.error("Update specific completion error:", e);
+
+    if (e.name === "CastError") {
+      return res.status(400).json({
+        message: "Invalid completion ID",
+      });
+    }
+
+    if (e.name === "MongoNetworkError" || e.name === "MongoServerError") {
+      return res.status(503).json({
+        message: "Database service temporarily unavailable. Please try again later.",
+      });
+    }
+
     return res.status(500).json({
-      message: "Couldn't update habit",
-      error: e instanceof Error ? e.message : "Unknown error",
+      message: "An unexpected error occurred. Please try again later.",
     });
   }
 };
@@ -134,10 +186,23 @@ const deleteCompletion = async (req: Request, res: Response) => {
     return res.status(200).json({
       message: "Completion deleted successfully",
     });
-  } catch (e) {
+  } catch (e: any) {
+    console.error("Delete completion error:", e);
+
+    if (e.name === "CastError") {
+      return res.status(400).json({
+        message: "Invalid completion ID",
+      });
+    }
+
+    if (e.name === "MongoNetworkError" || e.name === "MongoServerError") {
+      return res.status(503).json({
+        message: "Database service temporarily unavailable. Please try again later.",
+      });
+    }
+
     return res.status(500).json({
-      message: "Couldn't undo completion",
-      error: e instanceof Error ? e.message : "Unknown error",
+      message: "An unexpected error occurred. Please try again later.",
     });
   }
 };

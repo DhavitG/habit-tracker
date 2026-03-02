@@ -20,13 +20,26 @@ const createHabit = async (req: Request, res: Response) => {
     });
 
     return res.status(201).json({
-      message: "New habit created succesfully",
+      message: "New habit created successfully",
       habit: newHabit,
     });
-  } catch (e) {
+  } catch (e: any) {
+    console.error("Create habit error:", e);
+
+    if (e.name === "ValidationError") {
+      return res.status(422).json({
+        message: "Invalid data provided",
+      });
+    }
+
+    if (e.name === "MongoNetworkError" || e.name === "MongoServerError") {
+      return res.status(503).json({
+        message: "Database service temporarily unavailable. Please try again later.",
+      });
+    }
+
     return res.status(500).json({
-      message: "Failed to create habit",
-      error: e instanceof Error ? e.message : "Unknown error",
+      message: "An unexpected error occurred. Please try again later.",
     });
   }
 };
@@ -35,15 +48,22 @@ const getAllHabits = async (req: Request, res: Response) => {
   try {
     const userId = req.userId;
 
-    const habits = await HabitModel.find({ userId }); // find gets you multiple docs
+    const habits = await HabitModel.find({ userId });
 
     return res.status(200).json({
       habits,
     });
-  } catch (e) {
+  } catch (e: any) {
+    console.error("Get habits error:", e);
+
+    if (e.name === "MongoNetworkError" || e.name === "MongoServerError") {
+      return res.status(503).json({
+        message: "Database service temporarily unavailable. Please try again later.",
+      });
+    }
+
     return res.status(500).json({
-      message: "Failed to fetch habits",
-      error: e instanceof Error ? e.message : "Unknown error",
+      message: "An unexpected error occurred. Please try again later.",
     });
   }
 };
@@ -71,17 +91,36 @@ const updateHabit = async (req: Request, res: Response) => {
     );
 
     if (!updatedHabit) {
-      return res.status(404).json({ message: "Habit Not Found" });
+      return res.status(404).json({ message: "Habit not found" });
     }
 
     return res.status(200).json({
-      message: "Habit updated succesfully!",
-      updateHabit,
+      message: "Habit updated successfully",
+      habit: updatedHabit,
     });
-  } catch (e) {
+  } catch (e: any) {
+    console.error("Update habit error:", e);
+
+    if (e.name === "CastError") {
+      return res.status(400).json({
+        message: "Invalid habit ID",
+      });
+    }
+
+    if (e.name === "ValidationError") {
+      return res.status(422).json({
+        message: "Invalid data provided",
+      });
+    }
+
+    if (e.name === "MongoNetworkError" || e.name === "MongoServerError") {
+      return res.status(503).json({
+        message: "Database service temporarily unavailable. Please try again later.",
+      });
+    }
+
     return res.status(500).json({
-      message: "Failed to update habit",
-      error: e instanceof Error ? e.message : "Unknown error",
+      message: "An unexpected error occurred. Please try again later.",
     });
   }
 };
@@ -91,20 +130,35 @@ const deleteHabit = async (req: Request, res: Response) => {
     const userId = req.userId;
     const habitId = req.params.id;
 
-    const deletedHabit = await HabitModel.findByIdAndDelete({
+    const deletedHabit = await HabitModel.findOneAndDelete({
       _id: habitId,
       userId,
     });
 
-    if (!deletedHabit)
+    if (!deletedHabit) {
       return res.status(404).json({ message: "Habit not found" });
-    res.status(200).json({
-      message: "Habit deleted succesfully!",
+    }
+
+    return res.status(200).json({
+      message: "Habit deleted successfully",
     });
-  } catch (e) {
+  } catch (e: any) {
+    console.error("Delete habit error:", e);
+
+    if (e.name === "CastError") {
+      return res.status(400).json({
+        message: "Invalid habit ID",
+      });
+    }
+
+    if (e.name === "MongoNetworkError" || e.name === "MongoServerError") {
+      return res.status(503).json({
+        message: "Database service temporarily unavailable. Please try again later.",
+      });
+    }
+
     return res.status(500).json({
-      message: "Failed to delete habit",
-      error: e instanceof Error ? e.message : "Unknown error",
+      message: "An unexpected error occurred. Please try again later.",
     });
   }
 };

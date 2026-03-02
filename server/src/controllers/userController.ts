@@ -109,7 +109,7 @@ export const userSignIn = async (req: Request, res: Response) => {
     const user = await UserModel.findOne({ email });
     if (!user) {
       return res.status(401).json({
-        message: "Inavlid credentials",
+        message: "Invalid credentials",
       });
     }
 

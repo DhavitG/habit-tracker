@@ -4,7 +4,7 @@ import jwt, { type JwtPayload } from "jsonwebtoken";
 const userMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const header = req.headers["authorization"]?.split(" ")[1];
 
-  if (!header) return res.status(403).json({ message: "No token provided" });
+  if (!header) return res.status(401).json({ message: "No token provided" });
 
   try {
     const decoded = jwt.verify(
@@ -17,7 +17,7 @@ const userMiddleware = (req: Request, res: Response, next: NextFunction) => {
       next();
     }
   } catch (e) {
-    res.status(403).json({ message: "You are not logged in." });
+    res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 
