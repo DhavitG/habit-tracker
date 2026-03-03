@@ -209,11 +209,11 @@ export const getMe = async (req: Request, res: Response) => {
 
 export const updateMe = async (req: Request, res: Response) => {
   try {
-    const { fullname, settings } = req.body;
+    const { fullName, settings } = req.body;
 
     const updateFields: Record<string, any> = {};
 
-    if (fullname !== undefined) updateFields.fullName = fullname;
+    if (fullName !== undefined) updateFields.fullName = fullName;
 
     if (settings) {
       if (settings.timezone !== undefined)

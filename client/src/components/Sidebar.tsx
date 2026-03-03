@@ -15,7 +15,7 @@ const navItems = [
 
 const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
   return (
-    <aside className="w-64 h-screen bg-card border-r border-border flex flex-col">
+    <aside className="w-64 h-screen sticky top-0 bg-card border-r border-border flex flex-col">
       <div className="p-6 flex items-center gap-2.5">
         <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
           <Sparkles className="h-4 w-4 text-primary-foreground" />

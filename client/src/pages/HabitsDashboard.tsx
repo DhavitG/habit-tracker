@@ -8,14 +8,28 @@ import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog";
 import { FloatingActionButton } from "@/components/FloatingActionButton";
 import { EmptyState } from "@/components/EmptyState";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
+import { SettingsPage } from "@/components/SettingsPage";
 import { mockHabits } from "@/data/mockHabits";
 import { isHabitCompletedToday, getTodayKey } from "@/utils/habitHelpers";
 
+function getUserFirstName(): string {
+  try {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      const user = JSON.parse(stored);
+      return user.fullName?.split(" ")[0] || "";
+    }
+  } catch {}
+  return "";
+}
+
 function getGreeting(): string {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+  const name = getUserFirstName();
+  const suffix = name ? `, ${name}` : "";
+  if (hour < 12) return `Good morning${suffix}`;
+  if (hour < 17) return `Good afternoon${suffix}`;
+  return `Good evening${suffix}`;
 }
 
 function formatDate(): string {
@@ -92,107 +106,113 @@ export default function HabitsDashboard() {
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
       <div className="flex-1">
-        <div className="max-w-3xl mx-auto px-6 py-8">
-          {/* Header */}
-          <header className="flex items-start justify-between mb-8">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground mb-0.5">
-                {getGreeting()}
-              </h1>
-              <p className="text-sm text-muted-foreground">{formatDate()}</p>
+        {activeTab === "settings" ? (
+          <SettingsPage />
+        ) : (
+          <>
+            <div className="max-w-3xl mx-auto px-6 py-8">
+              {/* Header */}
+              <header className="flex items-start justify-between mb-8">
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground mb-0.5">
+                    {getGreeting()}
+                  </h1>
+                  <p className="text-sm text-muted-foreground">{formatDate()}</p>
+                </div>
+                <DarkModeToggle />
+              </header>
+
+              {/* Progress */}
+              {habits.length > 0 && (
+                <div className="mb-8">
+                  <div className="flex items-baseline justify-between mb-2">
+                    <p className="text-sm text-muted-foreground">
+                      <span className="text-foreground font-semibold">
+                        {completedCount}
+                      </span>
+                      {" / "}
+                      <span className="text-foreground font-semibold">
+                        {habits.length}
+                      </span>
+                      {" completed"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {habits.length > 0
+                        ? Math.round((completedCount / habits.length) * 100)
+                        : 0}
+                      %
+                    </p>
+                  </div>
+                  <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-primary rounded-full transition-all duration-500"
+                      style={{
+                        width: `${(completedCount / habits.length) * 100}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Habits List */}
+              {habits.length === 0 ? (
+                <EmptyState onCreateClick={openNewHabitPanel} />
+              ) : (
+                <div className="space-y-2">
+                  {habits.map((habit) => (
+                    <HabitCard
+                      key={habit.id}
+                      habit={habit}
+                      onToggle={handleToggle}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                      onClick={setViewingHabit}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-            <DarkModeToggle />
-          </header>
 
-          {/* Progress */}
-          {habits.length > 0 && (
-            <div className="mb-8">
-              <div className="flex items-baseline justify-between mb-2">
-                <p className="text-sm text-muted-foreground">
-                  <span className="text-foreground font-semibold">
-                    {completedCount}
-                  </span>
-                  {" / "}
-                  <span className="text-foreground font-semibold">
-                    {habits.length}
-                  </span>
-                  {" completed"}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {habits.length > 0
-                    ? Math.round((completedCount / habits.length) * 100)
-                    : 0}
-                  %
-                </p>
-              </div>
-              <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all duration-500"
-                  style={{
-                    width: `${(completedCount / habits.length) * 100}%`,
-                  }}
-                />
-              </div>
-            </div>
-          )}
+            <FloatingActionButton onClick={openNewHabitPanel} />
 
-          {/* Habits List */}
-          {habits.length === 0 ? (
-            <EmptyState onCreateClick={openNewHabitPanel} />
-          ) : (
-            <div className="space-y-2">
-              {habits.map((habit) => (
-                <HabitCard
-                  key={habit.id}
-                  habit={habit}
-                  onToggle={handleToggle}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onClick={setViewingHabit}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+            {/* Slide Panel for Create/Edit */}
+            <HabitSlidePanel
+              isOpen={isPanelOpen}
+              onClose={() => {
+                setIsPanelOpen(false);
+                setEditingHabit(null);
+              }}
+              onSave={handleSave}
+              editingHabit={editingHabit}
+            />
 
-        <FloatingActionButton onClick={openNewHabitPanel} />
+            {/* Detail Modal */}
+            <HabitDetailModal
+              habit={viewingHabit}
+              open={!!viewingHabit}
+              onClose={() => setViewingHabit(null)}
+              onEdit={() => {
+                if (viewingHabit) {
+                  setViewingHabit(null);
+                  handleEdit(viewingHabit);
+                }
+              }}
+              onDelete={() => {
+                if (viewingHabit) {
+                  setViewingHabit(null);
+                  handleDelete(viewingHabit);
+                }
+              }}
+            />
 
-        {/* Slide Panel for Create/Edit */}
-        <HabitSlidePanel
-          isOpen={isPanelOpen}
-          onClose={() => {
-            setIsPanelOpen(false);
-            setEditingHabit(null);
-          }}
-          onSave={handleSave}
-          editingHabit={editingHabit}
-        />
-
-        {/* Detail Modal */}
-        <HabitDetailModal
-          habit={viewingHabit}
-          open={!!viewingHabit}
-          onClose={() => setViewingHabit(null)}
-          onEdit={() => {
-            if (viewingHabit) {
-              setViewingHabit(null);
-              handleEdit(viewingHabit);
-            }
-          }}
-          onDelete={() => {
-            if (viewingHabit) {
-              setViewingHabit(null);
-              handleDelete(viewingHabit);
-            }
-          }}
-        />
-
-        {/* Delete Confirmation */}
-        <DeleteConfirmDialog
-          habit={deletingHabit}
-          onConfirm={confirmDelete}
-          onCancel={() => setDeletingHabit(null)}
-        />
+            {/* Delete Confirmation */}
+            <DeleteConfirmDialog
+              habit={deletingHabit}
+              onConfirm={confirmDelete}
+              onCancel={() => setDeletingHabit(null)}
+            />
+          </>
+        )}
       </div>
     </div>
   );
