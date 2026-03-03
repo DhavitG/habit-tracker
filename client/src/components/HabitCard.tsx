@@ -1,8 +1,9 @@
-import { Pencil, Trash2, Flame } from "lucide-react";
+import { Pencil, Trash2, Flame, TrendingUp } from "lucide-react";
 import { Habit, categoryColors } from "@/types/habit";
 import {
   isHabitCompletedToday,
   calculateStreak,
+  getHabitStats,
   getTodayKey,
 } from "@/utils/habitHelpers";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,7 @@ export function HabitCard({
 }: HabitCardProps) {
   const completed = isHabitCompletedToday(habit);
   const streak = calculateStreak(habit);
+  const stats = getHabitStats(habit);
   const categoryStyle = categoryColors[habit.category];
 
   return (
@@ -81,7 +83,12 @@ export function HabitCard({
         >
           {habit.name}
         </h3>
-        <div className="flex items-center gap-2 mt-1">
+        {habit.description && (
+          <p className="text-xs text-muted-foreground mt-0.5 truncate">
+            {habit.description}
+          </p>
+        )}
+        <div className="flex items-center gap-2 mt-1.5">
           <span
             className={cn(
               "inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium capitalize",
@@ -95,6 +102,12 @@ export function HabitCard({
             <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
               <Flame className="h-3 w-3 text-orange-500" />
               {streak}d
+            </span>
+          )}
+          {stats.completionRate > 0 && (
+            <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+              <TrendingUp className="h-3 w-3 text-primary" />
+              {stats.completionRate}%
             </span>
           )}
         </div>
