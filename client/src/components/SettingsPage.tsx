@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   User,
   Globe,
   Calendar,
   Moon,
   Sun,
-  LogOut,
   Check,
   Loader2,
 } from "lucide-react";
@@ -32,7 +30,6 @@ interface UserProfile {
 }
 
 export function SettingsPage() {
-  const navigate = useNavigate();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -111,12 +108,6 @@ export function SettingsPage() {
     } finally {
       setSaving(false);
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/signin", { replace: true });
   };
 
   const handleThemeChange = (value: string) => {
@@ -303,7 +294,7 @@ export function SettingsPage() {
       </section>
 
       {/* Save Button */}
-      <div className="flex justify-end mb-8">
+      <div className="flex justify-end">
         <button
           onClick={handleSave}
           disabled={saving}
@@ -317,30 +308,6 @@ export function SettingsPage() {
           {saving ? "Saving..." : saved ? "Saved" : "Save Changes"}
         </button>
       </div>
-
-      {/* Account Section */}
-      <section>
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-          Account
-        </h2>
-        <div className="rounded-xl border border-border bg-card p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-foreground">Sign Out</p>
-              <p className="text-xs text-muted-foreground">
-                Sign out of your account on this device
-              </p>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="h-9 px-4 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-destructive hover:border-destructive/50 transition-colors flex items-center gap-2"
-            >
-              <LogOut className="h-4 w-4" />
-              Sign Out
-            </button>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

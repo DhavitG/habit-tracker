@@ -1,4 +1,12 @@
-import { Home, BarChart3, Archive, Settings, Sparkles } from "lucide-react";
+import {
+  Home,
+  BarChart3,
+  Archive,
+  Settings,
+  Sparkles,
+  LogOut,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -14,6 +22,14 @@ const navItems = [
 ];
 
 const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/signin", { replace: true });
+  };
+
   return (
     <aside className="w-64 h-screen sticky top-0 bg-card border-r border-border flex flex-col">
       <div className="p-6 flex items-center gap-2.5">
@@ -44,6 +60,17 @@ const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
           );
         })}
       </nav>
+
+      {/* Sign Out */}
+      <div className="px-3 pb-4">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Sign Out</span>
+        </button>
+      </div>
     </aside>
   );
 };
