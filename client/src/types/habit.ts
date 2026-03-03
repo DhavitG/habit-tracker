@@ -17,6 +17,8 @@ export interface Habit {
   customDays?: number[]; // 0-6 for Sun-Sat
   createdAt: string;
   completions: Record<string, boolean>; // date string -> completed
+  isArchived?: boolean;
+  archivedAt?: string;
 }
 
 export interface HabitStats {

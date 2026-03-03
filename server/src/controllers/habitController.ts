@@ -47,8 +47,18 @@ const createHabit = async (req: Request, res: Response) => {
 const getAllHabits = async (req: Request, res: Response) => {
   try {
     const userId = req.userId;
+    const { archived } = req.query;
 
-    const habits = await HabitModel.find({ userId });
+    const filter: Record<string, any> = { userId };
+
+    if (archived === "true") {
+      filter.isArchived = true;
+    } else if (archived === "false") {
+      filter.isArchived = false;
+    }
+    // If no archived param is sent, returns all habits (no filter on isArchived)
+
+    const habits = await HabitModel.find(filter);
 
     return res.status(200).json({
       habits,
@@ -84,9 +94,20 @@ const updateHabit = async (req: Request, res: Response) => {
       isArchived,
     } = req.body;
 
+    const updateFields: Record<string, any> = {
+      name, description, category, frequency, goal, color, icon, isArchived,
+    };
+
+    // Auto-manage archivedAt timestamp
+    if (isArchived === true) {
+      updateFields.archivedAt = new Date();
+    } else if (isArchived === false) {
+      updateFields.archivedAt = null;
+    }
+
     const updatedHabit = await HabitModel.findOneAndUpdate(
       { _id: habitId, userId },
-      { name, description, category, frequency, goal, color, icon, isArchived },
+      updateFields,
       { new: true },
     );
 

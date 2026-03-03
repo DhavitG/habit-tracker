@@ -5,6 +5,8 @@ import { HabitCard } from "@/components/HabitCard";
 import { HabitSlidePanel } from "@/components/HabitSlidePanel";
 import { HabitDetailModal } from "@/components/HabitDetailModal";
 import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog";
+import { ArchiveConfirmDialog } from "@/components/ArchiveConfirmDialog";
+import { ArchivedHabitsPage } from "@/components/ArchivedHabitsPage";
 import { FloatingActionButton } from "@/components/FloatingActionButton";
 import { EmptyState } from "@/components/EmptyState";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
@@ -46,9 +48,14 @@ export default function HabitsDashboard() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [deletingHabit, setDeletingHabit] = useState<Habit | null>(null);
+  const [archivingHabit, setArchivingHabit] = useState<Habit | null>(null);
   const [viewingHabit, setViewingHabit] = useState<Habit | null>(null);
 
   const todayKey = getTodayKey();
+
+  // Filter habits by archived status
+  const activeHabits = habits.filter((h) => !h.isArchived);
+  const archivedHabits = habits.filter((h) => h.isArchived);
 
   const handleToggle = (id: string) => {
     setHabits((prev) =>
@@ -83,6 +90,34 @@ export default function HabitsDashboard() {
     }
   };
 
+  const handleArchive = (habit: Habit) => {
+    setArchivingHabit(habit);
+  };
+
+  const confirmArchive = () => {
+    if (archivingHabit) {
+      setHabits((prev) =>
+        prev.map((h) =>
+          h.id === archivingHabit.id
+            ? { ...h, isArchived: true, archivedAt: new Date().toISOString() }
+            : h,
+        ),
+      );
+      setArchivingHabit(null);
+      setViewingHabit(null);
+    }
+  };
+
+  const handleUnarchive = (id: string) => {
+    setHabits((prev) =>
+      prev.map((h) =>
+        h.id === id
+          ? { ...h, isArchived: false, archivedAt: undefined }
+          : h,
+      ),
+    );
+  };
+
   const handleSave = (habit: Habit) => {
     setHabits((prev) => {
       const exists = prev.find((h) => h.id === habit.id);
@@ -99,7 +134,9 @@ export default function HabitsDashboard() {
     setIsPanelOpen(true);
   };
 
-  const completedCount = habits.filter((h) => isHabitCompletedToday(h)).length;
+  const completedCount = activeHabits.filter((h) =>
+    isHabitCompletedToday(h),
+  ).length;
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -108,6 +145,11 @@ export default function HabitsDashboard() {
       <div className="flex-1">
         {activeTab === "settings" ? (
           <SettingsPage />
+        ) : activeTab === "archived" ? (
+          <ArchivedHabitsPage
+            habits={archivedHabits}
+            onUnarchive={handleUnarchive}
+          />
         ) : (
           <>
             <div className="max-w-3xl mx-auto px-6 py-8">
@@ -123,7 +165,7 @@ export default function HabitsDashboard() {
               </header>
 
               {/* Progress */}
-              {habits.length > 0 && (
+              {activeHabits.length > 0 && (
                 <div className="mb-8">
                   <div className="flex items-baseline justify-between mb-2">
                     <p className="text-sm text-muted-foreground">
@@ -132,13 +174,15 @@ export default function HabitsDashboard() {
                       </span>
                       {" / "}
                       <span className="text-foreground font-semibold">
-                        {habits.length}
+                        {activeHabits.length}
                       </span>
                       {" completed"}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {habits.length > 0
-                        ? Math.round((completedCount / habits.length) * 100)
+                      {activeHabits.length > 0
+                        ? Math.round(
+                            (completedCount / activeHabits.length) * 100,
+                          )
                         : 0}
                       %
                     </p>
@@ -147,7 +191,7 @@ export default function HabitsDashboard() {
                     <div
                       className="h-full bg-primary rounded-full transition-all duration-500"
                       style={{
-                        width: `${(completedCount / habits.length) * 100}%`,
+                        width: `${(completedCount / activeHabits.length) * 100}%`,
                       }}
                     />
                   </div>
@@ -155,17 +199,18 @@ export default function HabitsDashboard() {
               )}
 
               {/* Habits List */}
-              {habits.length === 0 ? (
+              {activeHabits.length === 0 ? (
                 <EmptyState onCreateClick={openNewHabitPanel} />
               ) : (
                 <div className="space-y-2">
-                  {habits.map((habit) => (
+                  {activeHabits.map((habit) => (
                     <HabitCard
                       key={habit.id}
                       habit={habit}
                       onToggle={handleToggle}
                       onEdit={handleEdit}
                       onDelete={handleDelete}
+                      onArchive={handleArchive}
                       onClick={setViewingHabit}
                     />
                   ))}
@@ -210,6 +255,13 @@ export default function HabitsDashboard() {
               habit={deletingHabit}
               onConfirm={confirmDelete}
               onCancel={() => setDeletingHabit(null)}
+            />
+
+            {/* Archive Confirmation */}
+            <ArchiveConfirmDialog
+              habit={archivingHabit}
+              onConfirm={confirmArchive}
+              onCancel={() => setArchivingHabit(null)}
             />
           </>
         )}

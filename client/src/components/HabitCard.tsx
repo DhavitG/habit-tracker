@@ -1,4 +1,4 @@
-import { Pencil, Trash2, Flame, TrendingUp } from "lucide-react";
+import { Pencil, Trash2, Archive, Flame, TrendingUp } from "lucide-react";
 import { Habit, categoryColors } from "@/types/habit";
 import {
   isHabitCompletedToday,
@@ -13,6 +13,7 @@ interface HabitCardProps {
   onToggle: (id: string) => void;
   onEdit: (habit: Habit) => void;
   onDelete: (habit: Habit) => void;
+  onArchive: (habit: Habit) => void;
   onClick?: (habit: Habit) => void;
 }
 
@@ -21,6 +22,7 @@ export function HabitCard({
   onToggle,
   onEdit,
   onDelete,
+  onArchive,
   onClick,
 }: HabitCardProps) {
   const completed = isHabitCompletedToday(habit);
@@ -124,6 +126,16 @@ export function HabitCard({
           aria-label="Edit habit"
         >
           <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onArchive(habit);
+          }}
+          className="p-1.5 rounded-md hover:bg-primary/10 transition-colors"
+          aria-label="Archive habit"
+        >
+          <Archive className="h-3.5 w-3.5 text-muted-foreground" />
         </button>
         <button
           onClick={(e) => {
