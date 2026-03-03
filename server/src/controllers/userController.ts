@@ -174,3 +174,95 @@ export const userSignIn = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    const user = await UserModel.findById(req.userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        settings: user.settings,
+      },
+    });
+  } catch (e: any) {
+    console.error("Get profile error:", e);
+
+    if (e.name === "MongoNetworkError" || e.name === "MongoServerError") {
+      return res.status(503).json({
+        message:
+          "Database service temporarily unavailable. Please try again later.",
+      });
+    }
+
+    return res.status(500).json({
+      message: "An unexpected error occurred. Please try again later.",
+    });
+  }
+};
+
+export const updateMe = async (req: Request, res: Response) => {
+  try {
+    const { fullname, settings } = req.body;
+
+    const updateFields: Record<string, any> = {};
+
+    if (fullname !== undefined) updateFields.fullName = fullname;
+
+    if (settings) {
+      if (settings.timezone !== undefined)
+        updateFields["settings.timezone"] = settings.timezone;
+      if (settings.weekStartsOn !== undefined)
+        updateFields["settings.weekStartsOn"] = settings.weekStartsOn;
+      if (settings.theme !== undefined)
+        updateFields["settings.theme"] = settings.theme;
+    }
+
+    const user = await UserModel.findByIdAndUpdate(
+      req.userId,
+      { $set: updateFields },
+      { new: true },
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        settings: user.settings,
+      },
+    });
+  } catch (e: any) {
+    console.error("Update profile error:", e);
+
+    if (e.name === "ValidationError") {
+      return res.status(422).json({
+        message: "Invalid data provided",
+      });
+    }
+
+    if (e.name === "MongoNetworkError" || e.name === "MongoServerError") {
+      return res.status(503).json({
+        message:
+          "Database service temporarily unavailable. Please try again later.",
+      });
+    }
+
+    return res.status(500).json({
+      message: "An unexpected error occurred. Please try again later.",
+    });
+  }
+};
