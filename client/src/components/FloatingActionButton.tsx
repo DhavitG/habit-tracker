@@ -10,7 +10,7 @@ export function FloatingActionButton({ onClick }: FloatingActionButtonProps) {
     <button
       onClick={onClick}
       className={cn(
-        "fixed bottom-8 right-8 h-14 w-14 rounded-full",
+        "fixed bottom-20 right-4 md:bottom-8 md:right-8 h-14 w-14 rounded-full",
         "bg-primary text-primary-foreground",
         "flex items-center justify-center",
         "shadow-lg transition-all duration-200",

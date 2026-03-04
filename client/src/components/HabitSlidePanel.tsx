@@ -96,7 +96,7 @@ export function HabitSlidePanel({
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-border">
+          <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-border">
             <h2 className="text-lg font-semibold text-foreground">
               {editingHabit ? "Edit Habit" : "New Habit"}
             </h2>
@@ -112,7 +112,7 @@ export function HabitSlidePanel({
           {/* Form */}
           <form
             onSubmit={handleSubmit}
-            className="flex-1 flex flex-col px-6 py-5 gap-5 overflow-y-auto"
+            className="flex-1 flex flex-col px-4 sm:px-6 py-4 sm:py-5 gap-5 overflow-y-auto"
           >
             <div className="space-y-1.5">
               <Label htmlFor="name" className="text-sm">

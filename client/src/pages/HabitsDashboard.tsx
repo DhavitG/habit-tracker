@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Home, BarChart3, Archive, Settings, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "@/components/Sidebar";
 import { Habit } from "@/types/habit";
 import { HabitCard } from "@/components/HabitCard";
@@ -14,6 +16,14 @@ import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { SettingsPage } from "@/components/SettingsPage";
 import { mockHabits } from "@/data/mockHabits";
 import { isHabitCompletedToday, getTodayKey } from "@/utils/habitHelpers";
+import { cn } from "@/lib/utils";
+
+const mobileNavItems = [
+  { id: "today", icon: Home, label: "Today" },
+  { id: "statistics", icon: BarChart3, label: "Stats" },
+  { id: "archived", icon: Archive, label: "Archived" },
+  { id: "settings", icon: Settings, label: "Settings" },
+];
 
 function getUserFirstName(): string {
   try {
@@ -44,6 +54,7 @@ function formatDate(): string {
 }
 
 export default function HabitsDashboard() {
+  const navigate = useNavigate();
   const [habits, setHabits] = useState<Habit[]>(mockHabits);
   const [activeTab, setActiveTab] = useState("today");
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -157,7 +168,7 @@ export default function HabitsDashboard() {
         onClearDate={() => setSelectedDate(null)}
       />
 
-      <div className="flex-1">
+      <div className="flex-1 pb-16 md:pb-0 overflow-x-hidden">
         {activeTab === "settings" ? (
           <SettingsPage />
         ) : activeTab === "archived" ? (
@@ -173,11 +184,11 @@ export default function HabitsDashboard() {
           />
         ) : (
           <>
-            <div className="max-w-3xl mx-auto px-6 py-8">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
               {/* Header */}
-              <header className="flex items-start justify-between mb-8">
+              <header className="flex items-start justify-between mb-6 sm:mb-8">
                 <div>
-                  <h1 className="text-2xl font-bold text-foreground mb-0.5">
+                  <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-0.5">
                     {getGreeting()}
                   </h1>
                   <p className="text-sm text-muted-foreground">{formatDate()}</p>
@@ -287,6 +298,42 @@ export default function HabitsDashboard() {
           </>
         )}
       </div>
+
+      {/* Mobile bottom tab bar */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border md:hidden">
+        <div className="flex items-center justify-around h-14">
+          {mobileNavItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleTabChange(item.id)}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors",
+                  isActive
+                    ? "text-primary"
+                    : "text-muted-foreground",
+                )}
+              >
+                <Icon className="h-5 w-5" />
+                <span className="text-[10px] font-medium">{item.label}</span>
+              </button>
+            );
+          })}
+          <button
+            onClick={() => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              navigate("/signin", { replace: true });
+            }}
+            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-muted-foreground transition-colors"
+          >
+            <LogOut className="h-5 w-5" />
+            <span className="text-[10px] font-medium">Sign Out</span>
+          </button>
+        </div>
+      </nav>
     </div>
   );
 }

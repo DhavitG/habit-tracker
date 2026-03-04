@@ -41,7 +41,7 @@ export function HabitCard({
   return (
     <div
       className={cn(
-        "group relative flex items-center gap-4 p-4 rounded-xl border border-border bg-card transition-all duration-200",
+        "group relative flex items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-xl border border-border bg-card transition-all duration-200",
         // Left accent border + hover themed by goal
         isQuit
           ? "border-l-[3px] border-l-red-500 hover:shadow-md hover:shadow-red-500/5 hover:border-red-200 dark:hover:border-red-900"
@@ -150,8 +150,8 @@ export function HabitCard({
         </div>
       </button>
 
-      {/* Actions */}
-      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+      {/* Actions — always visible on mobile, hover on desktop */}
+      <div className="flex items-center gap-0.5 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-150">
         <button
           onClick={(e) => {
             e.stopPropagation();

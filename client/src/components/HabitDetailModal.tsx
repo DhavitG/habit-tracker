@@ -33,7 +33,7 @@ export const HabitDetailModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -80,22 +80,22 @@ export const HabitDetailModal = ({
             <p className="text-sm text-muted-foreground">{habit.description}</p>
           )}
 
-          <div className="grid grid-cols-3 gap-3">
-            <div className="bg-muted rounded-lg p-4 text-center">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="bg-muted rounded-lg p-3 sm:p-4 text-center">
               <Flame className="h-5 w-5 mx-auto mb-1.5 text-orange-500" />
               <div className="text-2xl font-bold text-foreground">
                 {stats.currentStreak}
               </div>
               <div className="text-xs text-muted-foreground">Day Streak</div>
             </div>
-            <div className="bg-muted rounded-lg p-4 text-center">
+            <div className="bg-muted rounded-lg p-3 sm:p-4 text-center">
               <CheckCircle2 className="h-5 w-5 mx-auto mb-1.5 text-primary" />
               <div className="text-2xl font-bold text-foreground">
                 {stats.totalCompletions}
               </div>
               <div className="text-xs text-muted-foreground">Completions</div>
             </div>
-            <div className="bg-muted rounded-lg p-4 text-center">
+            <div className="bg-muted rounded-lg p-3 sm:p-4 text-center">
               <TrendingUp className="h-5 w-5 mx-auto mb-1.5 text-secondary" />
               <div className="text-2xl font-bold text-foreground">
                 {stats.completionRate}%

@@ -177,17 +177,17 @@ export function StatisticsPage({
   ).length;
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-8">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Statistics</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground">Statistics</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Track your progress over time
         </p>
       </div>
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-4 gap-3 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         <div className="rounded-xl border border-border bg-card p-4 text-center">
           <Flame className="h-4 w-4 mx-auto mb-1.5 text-orange-500" />
           <div className="text-xl font-bold text-foreground">{bestStreak}</div>
@@ -245,7 +245,7 @@ export function StatisticsPage({
       {/* Monthly Calendar */}
       {viewMode === "monthly" && (
         <section className="mb-8">
-          <div className="rounded-xl border border-border bg-card p-6">
+          <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
             {/* Month navigation */}
             <div className="flex items-center justify-between mb-5">
               <button
@@ -350,7 +350,7 @@ export function StatisticsPage({
       {/* Yearly Heatmap */}
       {viewMode === "yearly" && (
         <section className="mb-8">
-          <div className="rounded-xl border border-border bg-card p-6">
+          <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
             {/* Year navigation */}
             <div className="flex items-center justify-between mb-5">
               <button
@@ -534,7 +534,7 @@ export function StatisticsPage({
                 <div
                   key={habit.id}
                   className={cn(
-                    "flex items-center gap-3 p-3 rounded-xl border border-border bg-card",
+                    "flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl border border-border bg-card",
                     isQuit
                       ? "border-l-[3px] border-l-red-500"
                       : "border-l-[3px] border-l-emerald-500",
@@ -569,7 +569,7 @@ export function StatisticsPage({
 
                   <span
                     className={cn(
-                      "inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium capitalize flex-shrink-0",
+                      "hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium capitalize flex-shrink-0",
                       categoryStyle.light,
                       categoryStyle.dark,
                     )}

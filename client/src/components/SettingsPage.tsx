@@ -129,10 +129,10 @@ export function SettingsPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-8">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground">Settings</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Manage your account and preferences
         </p>
@@ -143,7 +143,7 @@ export function SettingsPage() {
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
           Profile
         </h2>
-        <div className="rounded-xl border border-border bg-card p-6">
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
           <div className="flex items-center gap-4 mb-6">
             <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
               <User className="h-5 w-5 text-primary" />
@@ -192,14 +192,14 @@ export function SettingsPage() {
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
           Preferences
         </h2>
-        <div className="rounded-xl border border-border bg-card p-6 space-y-6">
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-6 space-y-6">
           {/* Theme */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
               {theme === "dark" ? (
-                <Moon className="h-4 w-4 text-muted-foreground" />
+                <Moon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               ) : (
-                <Sun className="h-4 w-4 text-muted-foreground" />
+                <Sun className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               )}
               <div>
                 <p className="text-sm font-medium text-foreground">Theme</p>
@@ -209,7 +209,7 @@ export function SettingsPage() {
               </div>
             </div>
             <Select value={theme} onValueChange={handleThemeChange}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-full sm:w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -222,9 +222,9 @@ export function SettingsPage() {
           <Separator />
 
           {/* Timezone */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
-              <Globe className="h-4 w-4 text-muted-foreground" />
+              <Globe className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               <div>
                 <p className="text-sm font-medium text-foreground">Timezone</p>
                 <p className="text-xs text-muted-foreground">
@@ -233,7 +233,7 @@ export function SettingsPage() {
               </div>
             </div>
             <Select value={timezone} onValueChange={setTimezone}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-full sm:w-48">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -267,9 +267,9 @@ export function SettingsPage() {
           <Separator />
 
           {/* Week starts on */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               <div>
                 <p className="text-sm font-medium text-foreground">
                   Week Starts On
@@ -280,7 +280,7 @@ export function SettingsPage() {
               </div>
             </div>
             <Select value={weekStartsOn} onValueChange={setWeekStartsOn}>
-              <SelectTrigger className="w-36">
+              <SelectTrigger className="w-full sm:w-36">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
