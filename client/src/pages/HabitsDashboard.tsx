@@ -7,6 +7,7 @@ import { HabitDetailModal } from "@/components/HabitDetailModal";
 import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog";
 import { ArchiveConfirmDialog } from "@/components/ArchiveConfirmDialog";
 import { ArchivedHabitsPage } from "@/components/ArchivedHabitsPage";
+import { StatisticsPage } from "@/components/StatisticsPage";
 import { FloatingActionButton } from "@/components/FloatingActionButton";
 import { EmptyState } from "@/components/EmptyState";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
@@ -50,12 +51,21 @@ export default function HabitsDashboard() {
   const [deletingHabit, setDeletingHabit] = useState<Habit | null>(null);
   const [archivingHabit, setArchivingHabit] = useState<Habit | null>(null);
   const [viewingHabit, setViewingHabit] = useState<Habit | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const todayKey = getTodayKey();
 
   // Filter habits by archived status
   const activeHabits = habits.filter((h) => !h.isArchived);
   const archivedHabits = habits.filter((h) => h.isArchived);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    // Clear selected date when leaving statistics
+    if (tab !== "statistics") {
+      setSelectedDate(null);
+    }
+  };
 
   const handleToggle = (id: string) => {
     setHabits((prev) =>
@@ -140,7 +150,12 @@ export default function HabitsDashboard() {
 
   return (
     <div className="flex min-h-screen bg-background">
-      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+      <Sidebar
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        selectedDate={selectedDate}
+        onClearDate={() => setSelectedDate(null)}
+      />
 
       <div className="flex-1">
         {activeTab === "settings" ? (
@@ -149,6 +164,12 @@ export default function HabitsDashboard() {
           <ArchivedHabitsPage
             habits={archivedHabits}
             onUnarchive={handleUnarchive}
+          />
+        ) : activeTab === "statistics" ? (
+          <StatisticsPage
+            habits={activeHabits}
+            selectedDate={selectedDate}
+            onSelectDate={setSelectedDate}
           />
         ) : (
           <>

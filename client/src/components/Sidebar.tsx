@@ -5,13 +5,18 @@ import {
   Settings,
   Sparkles,
   LogOut,
+  CalendarDays,
+  X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { format, parseISO } from "date-fns";
 
 interface SidebarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  selectedDate?: string | null;
+  onClearDate?: () => void;
 }
 
 const navItems = [
@@ -21,7 +26,12 @@ const navItems = [
   { id: "settings", icon: Settings, label: "Settings" },
 ];
 
-const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
+const Sidebar = ({
+  activeTab,
+  onTabChange,
+  selectedDate,
+  onClearDate,
+}: SidebarProps) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -44,19 +54,36 @@ const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
           return (
-            <button
-              key={item.id}
-              onClick={() => onTabChange(item.id)}
-              className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1 text-sm transition-colors",
-                isActive
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
-              )}
-            >
-              <Icon className="h-4 w-4" />
-              <span>{item.label}</span>
-            </button>
+            <div key={item.id}>
+              <button
+                onClick={() => onTabChange(item.id)}
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1 text-sm transition-colors",
+                  isActive
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                <span>{item.label}</span>
+              </button>
+
+              {/* Selected date sub-item under Statistics */}
+              {item.id === "statistics" &&
+                isActive &&
+                selectedDate && (
+                  <button
+                    onClick={() => onClearDate?.()}
+                    className="w-full flex items-center gap-2 pl-10 pr-3 py-1.5 mb-1 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors group"
+                  >
+                    <CalendarDays className="h-3 w-3 flex-shrink-0" />
+                    <span className="truncate">
+                      {format(parseISO(selectedDate), "MMM d, yyyy")}
+                    </span>
+                    <X className="h-3 w-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                  </button>
+                )}
+            </div>
           );
         })}
       </nav>
