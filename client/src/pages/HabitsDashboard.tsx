@@ -280,6 +280,12 @@ export default function HabitsDashboard() {
                   handleDelete(viewingHabit);
                 }
               }}
+              onArchive={() => {
+                if (viewingHabit) {
+                  setViewingHabit(null);
+                  handleArchive(viewingHabit);
+                }
+              }}
             />
 
             {/* Delete Confirmation */}
