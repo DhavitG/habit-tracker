@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { X, TrendingUp, ShieldOff } from "lucide-react";
 import {
   Habit,
   HabitCategory,
+  GoalType,
   emojiOptions,
   categoryLabels,
 } from "@/types/habit";
@@ -37,6 +38,7 @@ export function HabitSlidePanel({
   const [description, setDescription] = useState("");
   const [emoji, setEmoji] = useState("🎯");
   const [category, setCategory] = useState<HabitCategory>("health");
+  const [goal, setGoal] = useState<GoalType>("build");
 
   useEffect(() => {
     if (editingHabit) {
@@ -44,11 +46,13 @@ export function HabitSlidePanel({
       setDescription(editingHabit.description || "");
       setEmoji(editingHabit.emoji);
       setCategory(editingHabit.category);
+      setGoal(editingHabit.goal || "build");
     } else {
       setName("");
       setDescription("");
       setEmoji("🎯");
       setCategory("health");
+      setGoal("build");
     }
   }, [editingHabit, isOpen]);
 
@@ -62,6 +66,7 @@ export function HabitSlidePanel({
       description: description.trim() || undefined,
       emoji,
       category,
+      goal,
       frequency: editingHabit?.frequency || "daily",
       createdAt: editingHabit?.createdAt || format(new Date(), "yyyy-MM-dd"),
       completions: editingHabit?.completions || {},
@@ -120,6 +125,43 @@ export function HabitSlidePanel({
                 placeholder="e.g., Morning meditation"
                 className="h-10"
               />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-sm">Goal</Label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setGoal("build")}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-2 h-10 rounded-lg text-sm font-medium transition-all border",
+                    goal === "build"
+                      ? "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-700"
+                      : "bg-muted text-muted-foreground border-transparent hover:text-foreground",
+                  )}
+                >
+                  <TrendingUp className="h-4 w-4" />
+                  Build
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGoal("quit")}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-2 h-10 rounded-lg text-sm font-medium transition-all border",
+                    goal === "quit"
+                      ? "bg-red-100 text-red-700 border-red-300 dark:bg-red-900/40 dark:text-red-300 dark:border-red-700"
+                      : "bg-muted text-muted-foreground border-transparent hover:text-foreground",
+                  )}
+                >
+                  <ShieldOff className="h-4 w-4" />
+                  Quit
+                </button>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                {goal === "build"
+                  ? "A habit you want to develop and maintain"
+                  : "A habit you want to break and stop doing"}
+              </p>
             </div>
 
             <div className="space-y-1.5">

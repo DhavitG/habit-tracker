@@ -1,4 +1,11 @@
-import { Pencil, Trash2, Archive, Flame, TrendingUp } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Archive,
+  Flame,
+  TrendingUp,
+  ShieldCheck,
+} from "lucide-react";
 import { Habit, categoryColors } from "@/types/habit";
 import {
   isHabitCompletedToday,
@@ -29,16 +36,19 @@ export function HabitCard({
   const streak = calculateStreak(habit);
   const stats = getHabitStats(habit);
   const categoryStyle = categoryColors[habit.category];
+  const isQuit = habit.goal === "quit";
 
   return (
     <div
       className={cn(
         "group relative flex items-center gap-4 p-4 rounded-xl border border-border bg-card transition-all duration-200",
         "hover:shadow-md hover:border-border/80",
+        // Left accent border
+        isQuit ? "border-l-[3px] border-l-red-500" : "border-l-[3px] border-l-emerald-500",
         completed && "opacity-75",
       )}
     >
-      {/* Checkbox */}
+      {/* Checkbox — themed by goal type */}
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -47,26 +57,41 @@ export function HabitCard({
         className={cn(
           "flex-shrink-0 h-7 w-7 rounded-lg border-2 transition-all duration-200 flex items-center justify-center",
           completed
-            ? "bg-primary border-primary"
-            : "border-muted-foreground/30 hover:border-primary",
+            ? isQuit
+              ? "bg-red-500 border-red-500"
+              : "bg-primary border-primary"
+            : isQuit
+              ? "border-red-300 hover:border-red-500"
+              : "border-muted-foreground/30 hover:border-primary",
         )}
-        aria-label={completed ? "Mark as incomplete" : "Mark as complete"}
+        aria-label={
+          completed
+            ? isQuit
+              ? "Mark as not resisted"
+              : "Mark as incomplete"
+            : isQuit
+              ? "Mark as resisted"
+              : "Mark as complete"
+        }
       >
-        {completed && (
-          <svg
-            className="h-4 w-4 text-primary-foreground"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={3}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        )}
+        {completed &&
+          (isQuit ? (
+            <ShieldCheck className="h-4 w-4 text-white" />
+          ) : (
+            <svg
+              className="h-4 w-4 text-primary-foreground"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={3}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          ))}
       </button>
 
       {/* Emoji */}
@@ -77,6 +102,15 @@ export function HabitCard({
         className="flex-1 min-w-0 text-left"
         onClick={() => onClick?.(habit)}
       >
+        {/* Goal label */}
+        <span
+          className={cn(
+            "text-[10px] font-semibold uppercase tracking-wider",
+            isQuit ? "text-red-500" : "text-emerald-600 dark:text-emerald-400",
+          )}
+        >
+          {isQuit ? "Quitting" : "Building"}
+        </span>
         <h3
           className={cn(
             "text-sm font-medium text-foreground transition-all duration-200",

@@ -6,6 +6,8 @@ export type HabitCategory =
 
 export type FrequencyType = "daily" | "custom";
 
+export type GoalType = "build" | "quit";
+
 export interface Habit {
   id: string;
   name: string;
@@ -13,6 +15,7 @@ export interface Habit {
   category: HabitCategory;
   emoji: string;
   color?: string;
+  goal: GoalType;
   frequency: FrequencyType;
   customDays?: number[]; // 0-6 for Sun-Sat
   createdAt: string;
@@ -69,4 +72,20 @@ export const categoryLabels: Record<HabitCategory, string> = {
   productivity: "Productivity",
   social: "Social",
   mindfulness: "Mindfulness",
+};
+
+export const goalLabels: Record<GoalType, string> = {
+  build: "Build",
+  quit: "Quit",
+};
+
+export const goalColors: Record<GoalType, { light: string; dark: string }> = {
+  build: {
+    light: "bg-emerald-100 text-emerald-700",
+    dark: "dark:bg-emerald-900/40 dark:text-emerald-300",
+  },
+  quit: {
+    light: "bg-red-100 text-red-700",
+    dark: "dark:bg-red-900/40 dark:text-red-300",
+  },
 };
