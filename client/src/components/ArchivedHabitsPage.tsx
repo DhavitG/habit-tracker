@@ -93,9 +93,11 @@ export function ArchivedHabitsPage({
               onClick={() => setGoalDropdownOpen((o) => !o)}
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
-                goalFilter !== "all"
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                goalFilter === "build"
+                  ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+                  : goalFilter === "quit"
+                    ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
             >
               {activeGoalLabel}
@@ -129,8 +131,16 @@ export function ArchivedHabitsPage({
                         className={cn(
                           "w-full flex items-center justify-between px-3 py-1.5 text-xs transition-colors",
                           goalFilter === option.id
-                            ? "text-primary font-medium"
-                            : "text-foreground hover:bg-muted",
+                            ? option.id === "quit"
+                              ? "text-red-600 dark:text-red-400 font-medium bg-red-50 dark:bg-red-900/20"
+                              : option.id === "build"
+                                ? "text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-900/20"
+                                : "text-primary font-medium"
+                            : option.id === "quit"
+                              ? "text-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                              : option.id === "build"
+                                ? "text-foreground hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-900/20 dark:hover:text-emerald-400"
+                                : "text-foreground hover:bg-muted",
                         )}
                       >
                         <span>{option.label}</span>

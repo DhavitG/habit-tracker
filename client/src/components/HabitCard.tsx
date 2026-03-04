@@ -42,9 +42,10 @@ export function HabitCard({
     <div
       className={cn(
         "group relative flex items-center gap-4 p-4 rounded-xl border border-border bg-card transition-all duration-200",
-        "hover:shadow-md hover:border-border/80",
-        // Left accent border
-        isQuit ? "border-l-[3px] border-l-red-500" : "border-l-[3px] border-l-emerald-500",
+        // Left accent border + hover themed by goal
+        isQuit
+          ? "border-l-[3px] border-l-red-500 hover:shadow-md hover:shadow-red-500/5 hover:border-red-200 dark:hover:border-red-900"
+          : "border-l-[3px] border-l-emerald-500 hover:shadow-md hover:shadow-emerald-500/5 hover:border-emerald-200 dark:hover:border-emerald-900",
         completed && "opacity-75",
       )}
     >
